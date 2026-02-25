@@ -248,7 +248,7 @@ export default function Projects() {
           >
             <span className="h-[1px] w-12 bg-gradient-to-r from-accent to-transparent" />
             <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent">
-              {/* projects */}
+              &#x2F;&#x2F; projects
             </span>
           </motion.div>
 

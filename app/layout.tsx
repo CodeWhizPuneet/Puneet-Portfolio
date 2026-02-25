@@ -3,6 +3,7 @@ import { Syne, JetBrains_Mono } from "next/font/google";
 import CursorGlow from "./components/CursorGlow";
 import ParticleField from "./components/ParticleField";
 import GradientOrbs from "./components/GradientOrbs";
+import LenisProvider from "./components/LenisProvider";
 import "./globals.css";
 
 const syne = Syne({
@@ -28,16 +29,41 @@ export const metadata: Metadata = {
     "AI ML",
     "Full Stack",
     "Developer",
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Mohali",
+    "India",
   ],
   authors: [{ name: "Puneet Shankar" }],
+  creator: "Puneet Shankar",
+  metadataBase: new URL("https://puneet-portfolio.vercel.app"),
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
+    title: "Puneet Shankar | CS Student & Full Stack Explorer",
+    description:
+      "CS student passionate about programming, AI & ML, and full stack development. Check out my projects and skills.",
+    type: "website",
+    url: "https://puneet-portfolio.vercel.app",
+    siteName: "Puneet Shankar Portfolio",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "Puneet Shankar | Portfolio",
     description:
-      "CS student passionate about programming, AI concepts, and full stack development. Explore my work.",
-    type: "website",
+      "CS student passionate about programming, AI & ML, and full stack development.",
+    creator: "@CodeWhizPuneet",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
   other: {
     "theme-color": "#030303",
@@ -52,7 +78,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${syne.variable} ${jetbrainsMono.variable} scroll-smooth`}
+      className={`${syne.variable} ${jetbrainsMono.variable}`}
     >
       <body className="font-sans antialiased bg-background text-primary">
         {/* Skip to content — accessibility */}
@@ -62,10 +88,12 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <ParticleField />
-        <GradientOrbs />
-        {children}
-        <CursorGlow />
+        <LenisProvider>
+          <ParticleField />
+          <GradientOrbs />
+          {children}
+          <CursorGlow />
+        </LenisProvider>
       </body>
     </html>
   );

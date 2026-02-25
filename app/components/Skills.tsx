@@ -63,7 +63,7 @@ export default function Skills() {
           >
             <span className="h-[1px] w-12 bg-gradient-to-r from-accent to-transparent" />
             <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent">
-              {/* skills & tools */}
+              &#x2F;&#x2F; skills &amp; tools
             </span>
           </motion.div>
 

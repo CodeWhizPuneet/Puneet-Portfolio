@@ -2,6 +2,7 @@
 
 import { useState, useRef, type FormEvent } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+import emailjs from "@emailjs/browser";
 import {
   Github,
   Linkedin,
@@ -77,10 +78,17 @@ export default function Contact() {
     setStatus("loading");
 
     try {
-      // Open default mail client with form data
-      const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
-      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
-      window.location.href = `mailto:puneetshankar2021@gmail.com?subject=${subject}&body=${body}`;
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        {
+          from_name: name,
+          from_email: email,
+          message: message,
+          to_name: "Puneet",
+        },
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      );
 
       setStatus("success");
       setName("");
@@ -127,7 +135,7 @@ export default function Contact() {
           >
             <span className="h-[1px] w-12 bg-gradient-to-r from-accent to-transparent" />
             <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent">
-              {/* contact */}
+              &#x2F;&#x2F; contact
             </span>
           </motion.div>
 
@@ -343,7 +351,7 @@ export default function Contact() {
                 >
                   <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
                   <p className="text-sm text-green-400 font-medium">
-                    Opening your email client — send the draft to reach me!
+                    Message sent! I&apos;ll get back to you within 24 hours.
                   </p>
                 </motion.div>
               )}

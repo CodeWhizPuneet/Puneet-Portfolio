@@ -56,7 +56,7 @@ export default function Experience() {
           >
             <span className="h-[1px] w-12 bg-gradient-to-r from-accent to-transparent" />
             <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent">
-              {/* experience */}
+              &#x2F;&#x2F; experience
             </span>
           </motion.div>
 
