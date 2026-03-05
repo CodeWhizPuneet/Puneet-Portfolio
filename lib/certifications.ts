@@ -59,7 +59,7 @@ export const certifications: Certification[] = [
     issuer: "IBM",
     date: "Sep 2025",
     platform: "IBM SkillsBuild",
-    // url: "paste your IBM SkillsBuild badge/certificate URL here",
+    url: "https://skills.yourlearning.ibm.com/certificate/share/66680faf89ewogICJsZWFybmVyQ05VTSIgOiAiNTU5NzM3MVJFRyIsCiAgIm9iamVjdFR5cGUiIDogIkFDVElWSVRZIiwKICAib2JqZWN0SWQiIDogIkFMTS1DT1VSU0VfMzgyNTQ2MSIKfQ5df6c4c9a4-10",
   },
   {
     title: "Ethical Considerations for Generative AI",

@@ -59,6 +59,12 @@ export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
   const [certOpen, setCertOpen] = useState(false);
 
+  // Lock page scroll (including Lenis) while cert modal is open
+  useEffect(() => {
+    document.body.style.overflow = certOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [certOpen]);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -264,7 +270,7 @@ export default function About() {
             onClick={() => setCertOpen(false)}
           >
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" />
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-xl pointer-events-none" />
 
             {/* Modal — max-h + overflow-y-auto for small screens */}
             <motion.div
@@ -273,6 +279,7 @@ export default function About() {
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
               transition={{ duration: 0.4, ease }}
               onClick={(e) => e.stopPropagation()}
+              data-lenis-prevent
               className="relative glass-card rounded-2xl p-6 md:p-10 max-w-lg w-full border border-border/50 max-h-[85vh] overflow-y-auto"
             >
               {/* Close button */}
