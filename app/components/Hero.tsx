@@ -221,8 +221,11 @@ export default function Hero() {
           </span>
         </motion.div>
 
-        {/* ── Name — letter-by-letter ── */}
-        <h1 className="text-[clamp(3.5rem,9vw,9rem)] font-black uppercase leading-[0.85] tracking-tighter text-primary">
+        {/* ── Name — letter-by-letter ──
+         * clamp: 2.8rem floor keeps SHANKAR (7 chars) below 320px viewport
+         * without horizontal overflow, while still scaling up beautifully
+         * on larger screens. */}
+        <h1 className="text-[clamp(2.8rem,9vw,9rem)] font-black uppercase leading-[0.85] tracking-tighter text-primary">
           <span className="block overflow-hidden whitespace-nowrap">
             {firstName.split("").map((char, i) => (
               <AnimatedChar key={`f-${i}`} char={char} delay={baseDelay + i * 0.07} />

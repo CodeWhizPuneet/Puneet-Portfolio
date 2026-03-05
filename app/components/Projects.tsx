@@ -16,7 +16,16 @@ function pad(n: number): string {
 function FeaturedCard({ project, index }: { project: Project; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
 
+  /* Only apply 3D tilt on pointer:fine devices (mouse). On touch devices
+   * onMouseMove doesn't fire, but guard explicitly to prevent stale styles
+   * if a user long-presses or the browser fires synthetic mouse events. */
+  const isPointerFine =
+    typeof window !== "undefined"
+      ? window.matchMedia("(pointer: fine)").matches
+      : false;
+
   function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
+    if (!isPointerFine) return;
     const card = cardRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();
@@ -33,6 +42,7 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
   }
 
   function handleMouseLeave() {
+    if (!isPointerFine) return;
     const card = cardRef.current;
     if (!card) return;
     card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)";

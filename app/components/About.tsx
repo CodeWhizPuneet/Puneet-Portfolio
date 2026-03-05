@@ -124,9 +124,9 @@ export default function About() {
             transition={{ duration: 0.7, delay: 0.2, ease }}
             className="space-y-8"
           >
-            {/* Pull quote */}
+            {/* Pull quote — smaller base size so it reads well at 320px */}
             <div className="relative pl-6 border-l-2 border-accent">
-              <p className="text-2xl md:text-3xl font-bold text-primary leading-snug">
+              <p className="text-xl md:text-2xl lg:text-3xl font-bold text-primary leading-snug">
                 Strong foundations build{" "}
                 <span className="gradient-text">great engineers.</span>
               </p>
