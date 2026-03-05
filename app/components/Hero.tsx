@@ -222,10 +222,10 @@ export default function Hero() {
         </motion.div>
 
         {/* ── Name — letter-by-letter ──
-         * clamp: 2.8rem floor keeps SHANKAR (7 chars) below 320px viewport
-         * without horizontal overflow, while still scaling up beautifully
-         * on larger screens. */}
-        <h1 className="text-[clamp(2.8rem,9vw,9rem)] font-black uppercase leading-[0.85] tracking-tighter text-primary">
+         * clamp floor is 1rem so the 9vw value always wins on real phones
+         * (9vw of 390px = 35px; 9vw only falls below 1rem at <178px viewports)
+         */}
+        <h1 className="text-[clamp(1rem,9vw,9rem)] font-black uppercase leading-[0.85] tracking-tighter text-primary">
           <span className="block overflow-hidden whitespace-nowrap">
             {firstName.split("").map((char, i) => (
               <AnimatedChar key={`f-${i}`} char={char} delay={baseDelay + i * 0.07} />

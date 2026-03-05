@@ -134,7 +134,7 @@ export default function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1, ease }}
-            className="text-5xl md:text-7xl font-black uppercase tracking-tight text-primary"
+            className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-primary"
           >
             Let&apos;s Talk
           </motion.h2>
