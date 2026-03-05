@@ -24,8 +24,11 @@ export default function ParticleField() {
     let mouseX = -9999;
     let mouseY = -9999;
     const particles: Particle[] = [];
-    const PARTICLE_COUNT = 80;
-    const CONNECTION_DISTANCE = 120;
+
+    /* ── Reduced counts on mobile saves CPU / battery ── */
+    const isMobile = window.innerWidth < 768;
+    const PARTICLE_COUNT = isMobile ? 35 : 80;
+    const CONNECTION_DISTANCE = isMobile ? 0 : 120; // disable connections on mobile
     const MOUSE_RADIUS = 200;
 
     function resize() {

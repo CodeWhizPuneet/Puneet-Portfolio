@@ -23,15 +23,15 @@ export default function ResumePage() {
 
   return (
     <div className="fixed inset-0 bg-background z-[200] flex flex-col">
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-6 py-3 bg-surface border-b border-border/50">
+      {/* Top bar — wraps to 2 rows on very narrow screens */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-surface border-b border-border/50">
         <Link
           href="/"
           className="text-sm font-mono text-accent hover:text-accent-hover transition-colors"
         >
-          &larr; Back to Portfolio
+          &larr; Back
         </Link>
-        <span className="text-xs font-mono text-secondary tracking-widest uppercase">
+        <span className="text-xs font-mono text-secondary tracking-widest uppercase hidden sm:block">
           Puneet Shankar — Resume
         </span>
         <button

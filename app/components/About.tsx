@@ -9,7 +9,7 @@ import { X, Award, ExternalLink } from "lucide-react";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const ticker =
-  "C++ · Python · Java · DSA · Full Stack · AI & ML · Problem Solving · Clean Code · Next.js · Continuous Learning · ";
+  "C++ · Python · Java · DSA · Machine Learning · Neural Networks · Full Stack · AI & ML · Problem Solving · Clean Code · Next.js · LLMs · RAG · Continuous Learning · ";
 
 /* ── Animated counter ── */
 function AnimatedCounter({
@@ -201,9 +201,9 @@ export default function About() {
               })}
             </div>
 
-            {/* Highlight cards */}
+            {/* Highlight cards — quick snapshot of current focus & goals */}
             {[
-              { tag: "focus", text: "Full Stack & Applied AI" },
+              { tag: "focus", text: "AI/ML Engineering & Full Stack" },
               { tag: "motto", text: "Learn, Build, Improve, Repeat" },
               { tag: "seeking", text: "Internships & Learning Opportunities" },
             ].map(({ tag, text }, i) => (
@@ -264,14 +264,14 @@ export default function About() {
             {/* Backdrop */}
             <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" />
 
-            {/* Modal */}
+            {/* Modal — max-h + overflow-y-auto for small screens */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
               transition={{ duration: 0.4, ease }}
               onClick={(e) => e.stopPropagation()}
-              className="relative glass-card rounded-2xl p-8 md:p-10 max-w-lg w-full border border-border/50"
+              className="relative glass-card rounded-2xl p-6 md:p-10 max-w-lg w-full border border-border/50 max-h-[85vh] overflow-y-auto"
             >
               {/* Close button */}
               <button

@@ -108,8 +108,9 @@ export default function Navbar() {
             </span>
             <span className="text-xl font-black text-accent">.</span>
             <span className="ml-2 h-4 w-[1px] bg-border hidden sm:block" />
+            {/* "AI/ML" label positioned after the divider */}
             <span className="ml-2 text-[10px] font-mono text-tertiary uppercase tracking-widest hidden sm:block">
-              Student
+              AI/ML Student
             </span>
           </a>
 

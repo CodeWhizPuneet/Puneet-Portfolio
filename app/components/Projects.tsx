@@ -47,9 +47,7 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
       transition={{ duration: 0.8, delay: 0.1, ease }}
-      className={`grid md:grid-cols-2 gap-8 items-center ${
-        !isEven ? "md:direction-rtl" : ""
-      }`}
+      className="grid md:grid-cols-2 gap-8 items-center"
     >
       {/* Project visual — gradient placeholder */}
       <motion.div

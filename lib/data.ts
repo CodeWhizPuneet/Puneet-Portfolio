@@ -78,4 +78,13 @@ export const skills = {
     "MongoDB",
     "MySQL",
   ],
+  /* AI/ML track — technologies actively being studied */
+  aiml: [
+    "Machine Learning (fundamentals)",
+    "Neural Networks",
+    "Google Gemini API",
+    "Retrieval-Augmented Generation",
+    "Prompt Engineering",
+    "NumPy & Pandas",
+  ],
 };

@@ -4,17 +4,7 @@ import { useRef, useCallback, useState, useEffect, type MouseEvent } from "react
 import { motion } from "motion/react";
 import TextScramble from "./TextScramble";
 import { ArrowRight, Github, ChevronDown, FileDown } from "lucide-react";
-
-const LeetCodeIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className}
-  >
-    <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z" />
-  </svg>
-);
+import { LeetCodeIcon } from "./icons";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -258,9 +248,9 @@ export default function Hero() {
           className="mt-8 flex items-center gap-3"
         >
           <div className="h-6 w-[3px] bg-accent rounded-full" />
-          <div className="text-lg md:text-xl font-mono">
+          <div className="text-base md:text-xl font-mono">
             <TextScramble
-              text="CS Student · Full Stack Explorer"
+              text="CS Student · AI/ML Aspirant · Full Stack Explorer"
               className="text-accent"
               delay={1600}
               speed={25}
@@ -280,11 +270,12 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={stagger(4)}
-          className="mt-6 text-base md:text-lg leading-relaxed text-secondary max-w-2xl"
+          className="mt-6 text-sm md:text-base lg:text-lg leading-relaxed text-secondary max-w-2xl"
         >
-          Computer Science student specializing in AI &amp; ML, focused on
-          building strong programming foundations and exploring full stack
-          development — one project at a time.
+          Computer Science student specializing in{" "}
+          <span className="text-accent font-semibold">AI &amp; Machine Learning</span>,
+          building strong fundamentals and exploring full stack development
+          while learning to apply ML concepts — one project at a time.
         </motion.p>
 
         {/* Status + CTAs */}
@@ -296,55 +287,67 @@ export default function Hero() {
         >
           <StatusBadge />
 
-          <div className="flex flex-col sm:flex-row items-start gap-4">
-            <Magnetic
-              href="#projects"
-              className="glow-button group relative inline-flex items-center gap-3 px-8 py-4 rounded-lg bg-accent text-background font-bold text-sm uppercase tracking-wider hover:bg-accent-hover transition-all duration-300"
-            >
-              <span>View Projects</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Magnetic>
+          {/*
+           * CTA button rows:
+           * — Row 1: Primary actions (View Projects + Resume)
+           * — Row 2: Profile links (GitHub + LeetCode)
+           * flex-wrap ensures they never overflow horizontally on any screen.
+           */}
+          <div className="flex flex-col gap-3">
+            {/* Primary CTAs */}
+            <div className="flex flex-wrap items-center gap-3">
+              <Magnetic
+                href="#projects"
+                className="glow-button group relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 rounded-lg bg-accent text-background font-bold text-sm uppercase tracking-wider hover:bg-accent-hover transition-all duration-300"
+              >
+                <span>View Projects</span>
+                <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Magnetic>
 
-            <Magnetic
-              href="/resume"
-              className="group inline-flex items-center gap-3 px-8 py-4 rounded-lg border border-accent/30 text-accent font-bold text-sm uppercase tracking-wider hover:bg-accent/10 hover:border-accent/50 backdrop-blur-sm transition-all duration-300"
-            >
-              <FileDown className="w-4 h-4" />
-              <span>Resume</span>
-            </Magnetic>
+              <Magnetic
+                href="/resume"
+                className="group inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 rounded-lg border border-accent/30 text-accent font-bold text-sm uppercase tracking-wider hover:bg-accent/10 hover:border-accent/50 backdrop-blur-sm transition-all duration-300"
+              >
+                <FileDown className="w-4 h-4" />
+                <span>Resume</span>
+              </Magnetic>
+            </div>
 
-            <Magnetic
-              href="https://github.com/CodeWhizPuneet"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 px-8 py-4 rounded-lg border border-border/60 text-secondary font-bold text-sm uppercase tracking-wider hover:border-accent/40 hover:text-primary backdrop-blur-sm transition-all duration-300"
-            >
-              <Github className="w-4 h-4" />
-              <span>GitHub</span>
-            </Magnetic>
+            {/* Profile / social links */}
+            <div className="flex flex-wrap items-center gap-3">
+              <Magnetic
+                href="https://github.com/CodeWhizPuneet"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-lg border border-border/60 text-secondary font-bold text-sm uppercase tracking-wider hover:border-accent/40 hover:text-primary backdrop-blur-sm transition-all duration-300"
+              >
+                <Github className="w-4 h-4" />
+                <span>GitHub</span>
+              </Magnetic>
 
-            <Magnetic
-              href="https://leetcode.com/u/CodeWhizPuneet"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 px-8 py-4 rounded-lg border border-border/60 text-secondary font-bold text-sm uppercase tracking-wider hover:border-accent/40 hover:text-primary backdrop-blur-sm transition-all duration-300"
-            >
-              <LeetCodeIcon className="w-4 h-4" />
-              <span>LeetCode</span>
-            </Magnetic>
+              <Magnetic
+                href="https://leetcode.com/u/CodeWhizPuneet"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 sm:gap-3 px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-lg border border-border/60 text-secondary font-bold text-sm uppercase tracking-wider hover:border-accent/40 hover:text-primary backdrop-blur-sm transition-all duration-300"
+              >
+                <LeetCodeIcon className="w-4 h-4" />
+                <span>LeetCode</span>
+              </Magnetic>
+            </div>
           </div>
         </motion.div>
 
-        {/* Scramble role text — appears after delay */}
+        {/* Scramble role text — appears after delay; reflects AI/ML journey */}
         {showScramble && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="mt-10 font-mono text-xs text-tertiary tracking-wider"
+            className="mt-10 font-mono text-xs text-tertiary tracking-wider break-words"
           >
             <TextScramble
-              text="// learning, building, growing — one project at a time"
+              text="// learning ML, building full-stack, growing every day"
               delay={200}
               speed={15}
             />

@@ -7,6 +7,7 @@ import {
   Code2,
   Cpu,
   Wrench,
+  Brain,
 } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -15,7 +16,8 @@ function pad(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-const categoryIcons = [Code2, Cpu, Wrench];
+/* One icon per category — index order matches the categories array below */
+const categoryIcons = [Code2, Cpu, Wrench, Brain];
 
 export default function Skills() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -31,6 +33,8 @@ export default function Skills() {
     { title: "Programming Languages", skills: skills.languages },
     { title: "Core Computer Science", skills: skills.core },
     { title: "Tools & Frameworks", skills: skills.tools },
+    /* AI/ML learning track — marks technologies Puneet is actively studying */
+    { title: "AI / ML Learning Track", skills: skills.aiml },
   ];
 
   return (
@@ -78,8 +82,8 @@ export default function Skills() {
           </motion.h2>
         </div>
 
-        {/* Cards grid */}
-        <div className="grid md:grid-cols-3 gap-6">
+        {/* Cards grid — 2 cols on md, 4 cols on xl for the 4 categories */}
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
           {categories.map(({ title, skills: skillList }, catIdx) => {
             const Icon = categoryIcons[catIdx];
             return (
@@ -148,9 +152,9 @@ export default function Skills() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-12 text-center text-xs font-mono text-tertiary tracking-wider"
         >
-          Always learning. Always building. Currently exploring{" "}
-          <span className="text-accent">Full Stack Development</span> &{" "}
-          <span className="text-accent">Applied AI</span>.
+          Always learning. Always building. Currently deepening{" "}
+          <span className="text-accent">AI / ML foundations</span> while exploring{" "}
+          <span className="text-accent">Full Stack Development</span>.
         </motion.p>
       </div>
     </section>
