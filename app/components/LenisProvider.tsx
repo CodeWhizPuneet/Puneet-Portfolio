@@ -33,7 +33,7 @@ export default function LenisProvider({
       const target = (e.target as HTMLElement).closest("a");
       if (!target) return;
       const href = target.getAttribute("href");
-      if (!href || !href.startsWith("#")) return;
+      if (!href || !href.startsWith("#") || href === "#") return;
       e.preventDefault();
       const el = document.querySelector(href);
       if (el) lenis.scrollTo(el as HTMLElement, { offset: -80, duration: 1.6 });

@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "motion/react";
 import { stats } from "@/lib/data";
 import { certifications } from "@/lib/certifications";
+import TiltCard from "./TiltCard";
 import { X, Award, ExternalLink } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -174,15 +175,15 @@ export default function About() {
                 }
 
                 return (
+                  <TiltCard key={label} maxTilt={7} scale={1.03} glare={true}>
                   <motion.div
-                    key={label}
                     initial={{ opacity: 0, y: 20, scale: 0.95 }}
                     whileInView={{ opacity: 1, y: 0, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.3 + i * 0.1, ease }}
                     onClick={isClickable ? handleClick : undefined}
                     className={`glass-card rounded-xl p-6 text-center animated-border ${
-                      isClickable ? "cursor-pointer hover:border-accent/40 hover:scale-[1.03] transition-transform duration-300" : ""
+                      isClickable ? "cursor-pointer hover:border-accent/40 transition-colors duration-300" : ""
                     }`}
                   >
                     <p className="text-3xl md:text-4xl font-black text-accent mb-1">
@@ -197,6 +198,7 @@ export default function About() {
                       </p>
                     )}
                   </motion.div>
+                  </TiltCard>
                 );
               })}
             </div>

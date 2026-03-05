@@ -420,3 +420,117 @@ svg {
     opacity: 0;
   }
 }
+
+/* ═══════════════════════════════════════════
+   3D TILT CARD
+   TiltCard.tsx applies perspective transforms via
+   inline styles; these classes handle the rest.
+   ═══════════════════════════════════════════ */
+
+.tilt-wrap {
+  /* Establishes 3D stacking context */
+  transform-style: preserve-3d;
+  /* GPU-composited layer for smooth 60 fps */
+  will-change: transform;
+  position: relative;
+  /* Smooth shadow depth transition */
+  transition:
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.4s ease;
+}
+
+.tilt-wrap:hover {
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(245, 158, 11, 0.12),
+    0 8px 24px rgba(245, 158, 11, 0.06);
+}
+
+/* Glare / shine overlay — angle driven by JS */
+.tilt-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  mix-blend-mode: overlay;
+}
+
+/* ═══════════════════════════════════════════
+   3D DEPTH UTILITIES
+   ═══════════════════════════════════════════ */
+
+/* Layered shadow to simulate depth behind cards */
+.depth-shadow {
+  box-shadow:
+    0 1px  2px rgba(0, 0, 0, 0.30),
+    0 4px  8px rgba(0, 0, 0, 0.25),
+    0 12px 24px rgba(0, 0, 0, 0.20),
+    0 32px 56px rgba(0, 0, 0, 0.15);
+}
+
+/* Perspective container — wrap a group of 3D children */
+.scene-3d {
+  perspective: 1200px;
+  perspective-origin: 50% 40%;
+}
+
+/* ─── Reveal-from-depth entrance ─── */
+@keyframes revealDepth {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(12deg) translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(900px) rotateX(0deg) translateY(0);
+  }
+}
+
+.reveal-depth {
+  animation: revealDepth 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ─── Floating 3D element base ─── */
+.float-3d {
+  animation: float3d 7s ease-in-out infinite;
+}
+
+@keyframes float3d {
+  0%, 100% { transform: translateY(0px)   rotateX(0deg)  rotateZ(0deg); }
+  33%       { transform: translateY(-10px) rotateX(3deg)  rotateZ(1deg); }
+  66%       { transform: translateY(5px)  rotateX(-2deg) rotateZ(-1deg); }
+}
+
+/* ─── Shimmer depth line — horizontal scan effect ─── */
+@keyframes depthScan {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(300%);  opacity: 0; }
+}
+
+.depth-scan::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.4), transparent);
+  animation: depthScan 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ─── Disable 3D tilt on touch to prevent stuck states ─── */
+@media (hover: none) {
+  .tilt-wrap {
+    transform: none !important;
+    transition: none !important;
+    will-change: auto;
+  }
+
+  .tilt-glare { display: none; }
+}

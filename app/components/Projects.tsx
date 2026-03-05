@@ -4,6 +4,7 @@ import { useRef, type MouseEvent } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { projects } from "@/lib/data";
 import type { Project } from "@/types";
+import TiltCard from "./TiltCard";
 import { Github, ExternalLink, ArrowRight } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -14,11 +15,10 @@ function pad(n: number): string {
 
 /* ── Featured Project Card ── */
 function FeaturedCard({ project, index }: { project: Project; index: number }) {
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef  = useRef<HTMLDivElement>(null);
+  const glareRef = useRef<HTMLDivElement>(null);
+  const rafId    = useRef<number>(0);
 
-  /* Only apply 3D tilt on pointer:fine devices (mouse). On touch devices
-   * onMouseMove doesn't fire, but guard explicitly to prevent stale styles
-   * if a user long-presses or the browser fires synthetic mouse events. */
   const isPointerFine =
     typeof window !== "undefined"
       ? window.matchMedia("(pointer: fine)").matches
@@ -28,35 +28,52 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
     if (!isPointerFine) return;
     const card = cardRef.current;
     if (!card) return;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -3;
-    const rotateY = ((x - centerX) / centerX) * 3;
-    card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`;
 
-    // Spotlight effect
-    card.style.background = `radial-gradient(circle at ${x}px ${y}px, #F59E0B08, #0a0a0fdd 50%)`;
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      const rect    = card.getBoundingClientRect();
+      const x       = e.clientX - rect.left;
+      const y       = e.clientY - rect.top;
+      const cx      = rect.width  / 2;
+      const cy      = rect.height / 2;
+      const rotateX = ((y - cy) / cy) * -5;
+      const rotateY = ((x - cx) / cx) *  5;
+
+      card.style.transform  = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02,1.02,1.02)`;
+      card.style.transition = "transform 0.08s linear";
+
+      /* Spotlight / radial spotlight following cursor */
+      card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(245,158,11,0.07), #0a0a0fdd 55%)`;
+
+      /* Glare layer */
+      if (glareRef.current) {
+        const angle = Math.atan2(y - cy, x - cx) * (180 / Math.PI) + 90;
+        glareRef.current.style.background = `linear-gradient(${angle}deg, rgba(245,158,11,0.10) 0%, transparent 55%)`;
+        glareRef.current.style.opacity    = "1";
+      }
+    });
   }
 
   function handleMouseLeave() {
     if (!isPointerFine) return;
+    cancelAnimationFrame(rafId.current);
     const card = cardRef.current;
     if (!card) return;
-    card.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)";
+    card.style.transform  = "perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)";
+    card.style.transition = "transform 0.65s cubic-bezier(0.22,1,0.36,1)";
     card.style.background = "";
+    if (glareRef.current) glareRef.current.style.opacity = "0";
   }
 
   const isEven = index % 2 === 0;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 60, rotateX: 8 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay: 0.1, ease }}
+      transition={{ duration: 0.9, delay: 0.1, ease }}
+      style={{ perspective: 1200 }}
       className="grid md:grid-cols-2 gap-8 items-center"
     >
       {/* Project visual — gradient placeholder */}
@@ -64,10 +81,11 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
         className={`relative aspect-[16/10] rounded-xl overflow-hidden ${
           !isEven ? "md:order-2" : ""
         }`}
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.4 }}
+        whileHover={{ scale: 1.03, rotateY: isEven ? -2 : 2 }}
+        transition={{ duration: 0.45, ease }}
+        style={{ transformStyle: "preserve-3d" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface to-surface border border-border/30 rounded-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface to-surface border border-border/30 rounded-xl depth-scan">
           {/* Decorative code lines */}
           <div className="absolute inset-0 p-6 flex flex-col gap-3 opacity-30">
             <div className="flex gap-2">
@@ -100,10 +118,20 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
         ref={cardRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        className={`glass-card rounded-xl p-8 md:p-10 transition-all duration-300 ease-out ${
+        className={`glass-card rounded-xl p-8 md:p-10 transition-colors duration-300 ease-out relative overflow-hidden ${
           !isEven ? "md:order-1" : ""
         }`}
+        style={{ transformStyle: "preserve-3d" }}
       >
+        {/* Glare overlay — follows mouse */}
+        <div
+          ref={glareRef}
+          className="absolute inset-0 pointer-events-none rounded-xl z-0"
+          style={{ opacity: 0, transition: "opacity 0.3s ease", mixBlendMode: "overlay" }}
+          aria-hidden="true"
+        />
+        {/* ── All inner content sits above the glare layer ── */}
+        <div className="relative z-[1]">
         {/* Number + Featured badge */}
         <div className="flex items-center gap-3 mb-4">
           <span className="text-xs font-mono text-accent/50 tracking-widest">
@@ -162,6 +190,7 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
             </a>
           )}
         </div>
+        </div>{/* end z-[1] wrapper */}
       </div>
     </motion.div>
   );
@@ -170,12 +199,13 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
 /* ── Small Project Card ── */
 function SmallCard({ project, index }: { project: Project; index: number }) {
   return (
+    <TiltCard maxTilt={9} scale={1.03}>
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 30, rotateX: 6 }}
+      whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: 0.1 + index * 0.1, ease }}
-      className="glass-card rounded-xl p-6 animated-border group hover:translate-y-[-4px] transition-all duration-300"
+      className="glass-card rounded-xl p-6 animated-border group h-full"
     >
       <div className="flex items-center justify-between mb-4">
         <span className="text-[10px] font-mono text-accent/50 tracking-widest">
@@ -210,6 +240,7 @@ function SmallCard({ project, index }: { project: Project; index: number }) {
         ))}
       </div>
     </motion.div>
+    </TiltCard>
   );
 }
 
@@ -288,7 +319,7 @@ export default function Projects() {
         </div>
 
         {/* Featured projects */}
-        <div className="space-y-20 mb-20">
+        <div className="space-y-20 mb-20 scene-3d">
           {featured.map((project, i) => (
             <FeaturedCard key={project.title} project={project} index={i} />
           ))}

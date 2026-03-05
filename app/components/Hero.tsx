@@ -12,6 +12,93 @@ function stagger(i: number) {
   return { duration: 0.8, delay: 0.4 + i * 0.15, ease };
 }
 
+/* ═══════════════════════════════════════════
+   3D HOLOGRAPHIC WIREFRAME CUBE
+   Pure CSS-3D, no extra deps.
+   ═══════════════════════════════════════════ */
+function HoloCube({ size = 96, speed = 18 }: { size?: number; speed?: number }) {
+  const half = size / 2;
+  /* Six faces, each placed by rotating the box then translating along its new Z axis */
+  const faces: string[] = [
+    `translateZ(${half}px)`,                          // front
+    `rotateY(180deg) translateZ(${half}px)`,          // back
+    `rotateY(90deg)  translateZ(${half}px)`,          // right
+    `rotateY(-90deg) translateZ(${half}px)`,          // left
+    `rotateX(90deg)  translateZ(${half}px)`,          // top
+    `rotateX(-90deg) translateZ(${half}px)`,          // bottom
+  ];
+
+  return (
+    <div style={{ width: size, height: size, perspective: 520, perspectiveOrigin: "50% 50%" }}>
+      <motion.div
+        animate={{ rotateY: 360, rotateX: [18, 36, 18] }}
+        transition={{
+          rotateY: { duration: speed,     repeat: Infinity, ease: "linear" },
+          rotateX: { duration: speed * 0.6, repeat: Infinity, ease: "easeInOut" },
+        }}
+        style={{ width: size, height: size, transformStyle: "preserve-3d", position: "relative" }}
+      >
+        {faces.map((transform, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              inset: 0,
+              border: "1px solid rgba(245,158,11,0.28)",
+              background: "rgba(245,158,11,0.018)",
+              transform,
+              backfaceVisibility: "visible",
+            }}
+          >
+            {/* Diagonal cross on each face for a grid/neural look */}
+            <div style={{ position: "absolute", inset: 0, overflow: "hidden", opacity: 0.35 }}>
+              <div style={{ position: "absolute", top: 0, left: 0, width: "141%", height: 1, background: "rgba(245,158,11,0.5)", transformOrigin: "top left", transform: `rotate(45deg) scaleX(0.707)` }} />
+              <div style={{ position: "absolute", top: 0, right: 0, width: "141%", height: 1, background: "rgba(245,158,11,0.5)", transformOrigin: "top right", transform: `rotate(-45deg) scaleX(0.707)` }} />
+            </div>
+          </div>
+        ))}
+        {/* Center glowing dot */}
+        <div style={{
+          position: "absolute",
+          left: "50%", top: "50%",
+          width: 6, height: 6,
+          marginLeft: -3, marginTop: -3,
+          borderRadius: "50%",
+          background: "rgba(245,158,11,0.9)",
+          boxShadow: "0 0 12px rgba(245,158,11,0.8)",
+        }} />
+      </motion.div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════
+   3D FLOATING RING STACK (orbit decorator)
+   ═══════════════════════════════════════════ */
+function FloatingRings() {
+  return (
+    <div className="pointer-events-none" style={{ perspective: 600 }}>
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          animate={{ rotateX: [55 + i * 10, 75 + i * 10, 55 + i * 10], rotateZ: 360 }}
+          transition={{
+            rotateX: { duration: 6 + i * 2, repeat: Infinity, ease: "easeInOut" },
+            rotateZ: { duration: 10 + i * 4, repeat: Infinity, ease: "linear" },
+          }}
+          style={{
+            position: "absolute",
+            inset: -i * 22,
+            borderRadius: "50%",
+            border: `1px solid rgba(245,158,11,${0.22 - i * 0.06})`,
+            transformStyle: "preserve-3d",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ── Magnetic wrapper ── */
 function Magnetic({
   children,
@@ -193,6 +280,37 @@ export default function Hero() {
           </motion.g>
         </motion.svg>
       </div>
+
+      {/* ── 3D HoloCube — floats near the geometric decoration (xl screens) ── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.4 }}
+        animate={{ opacity: 0.7, scale: 1 }}
+        transition={{ duration: 1.2, delay: 1.2, ease }}
+        className="absolute right-[68px] top-[18%] pointer-events-none hidden xl:block"
+      >
+        <HoloCube size={88} speed={16} />
+      </motion.div>
+
+      {/* ── Floating orbital rings — lower right corner accent (xl) ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.55 }}
+        transition={{ duration: 1.4, delay: 1.6 }}
+        className="absolute right-[220px] bottom-[14%] pointer-events-none hidden xl:block"
+        style={{ width: 64, height: 64 }}
+      >
+        <FloatingRings />
+      </motion.div>
+
+      {/* ── Small secondary cube — top left corner accent ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 0.35, y: 0 }}
+        transition={{ duration: 1.0, delay: 2.0, ease }}
+        className="absolute left-12 top-[22%] pointer-events-none hidden 2xl:block"
+      >
+        <HoloCube size={48} speed={24} />
+      </motion.div>
 
       {/* Giant watermark */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">

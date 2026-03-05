@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { skills } from "@/lib/data";
+import TiltCard from "./TiltCard";
 import {
   Code2,
   Cpu,
@@ -27,7 +28,10 @@ export default function Skills() {
     offset: ["start end", "end start"],
   });
 
-  const numberY = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  const numberY    = useTransform(scrollYProgress, [0, 1], [80, -80]);
+  /** Subtle 3D tilt on the cards grid as it scrolls into view */
+  const gridRotateX = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [6, 0, 0, -3]);
+  const gridY       = useTransform(scrollYProgress, [0, 0.3], [30, 0]);
 
   const categories = [
     { title: "Programming Languages", skills: skills.languages },
@@ -83,12 +87,15 @@ export default function Skills() {
         </div>
 
         {/* Cards grid — 2 cols on md, 4 cols on xl for the 4 categories */}
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <motion.div
+          style={{ rotateX: gridRotateX, y: gridY, perspective: 1000 }}
+          className="grid md:grid-cols-2 xl:grid-cols-4 gap-6"
+        >
           {categories.map(({ title, skills: skillList }, catIdx) => {
             const Icon = categoryIcons[catIdx];
             return (
+              <TiltCard key={title} maxTilt={8} scale={1.025}>
               <motion.div
-                key={title}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -140,9 +147,10 @@ export default function Skills() {
                   {skillList.length} technologies
                 </p>
               </motion.div>
+              </TiltCard>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Bottom tagline */}
         <motion.p

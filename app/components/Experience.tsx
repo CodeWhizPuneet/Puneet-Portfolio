@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { experience } from "@/lib/data";
+import TiltCard from "./TiltCard";
 import { Briefcase, GraduationCap, Code2 } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -93,10 +94,11 @@ export default function Experience() {
               return (
                 <motion.div
                   key={item.role}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 40, rotateX: 8 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.7, delay: 0.1 + i * 0.15, ease }}
+                  style={{ perspective: 900 }}
                   className={`relative flex items-start gap-8 md:gap-0 ${
                     isLeft ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
@@ -116,7 +118,8 @@ export default function Experience() {
                       isLeft ? "md:pr-12" : "md:pl-12"
                     }`}
                   >
-                    <div className="glass-card rounded-xl p-6 md:p-8 animated-border group hover:translate-y-[-2px] transition-all duration-300">
+                    <TiltCard maxTilt={6} scale={1.02}>
+                    <div className="glass-card rounded-xl p-6 md:p-8 animated-border group">
                       {/* Period badge */}
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center">
@@ -154,6 +157,7 @@ export default function Experience() {
                         </div>
                       )}
                     </div>
+                    </TiltCard>
                   </div>
                 </motion.div>
               );

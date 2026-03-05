@@ -5,10 +5,16 @@ import { useEffect, useRef } from "react";
 interface Particle {
   x: number;
   y: number;
+  /** Simulated depth: 0 = far, 1 = close */
+  z: number;
   vx: number;
   vy: number;
-  size: number;
-  opacity: number;
+  baseSize: number;
+  baseOpacity: number;
+  /** Hub nodes are larger, brighter, emit pulse rings */
+  isHub: boolean;
+  /** 0..1 pulsing animation progress for hub rings */
+  pulse: number;
 }
 
 export default function ParticleField() {
@@ -25,87 +31,155 @@ export default function ParticleField() {
     let mouseY = -9999;
     const particles: Particle[] = [];
 
-    /* ── Reduced counts on mobile saves CPU / battery ── */
+    /* ── Counts scaled for device capability ── */
     const isMobile = window.innerWidth < 768;
-    const PARTICLE_COUNT = isMobile ? 35 : 80;
-    const CONNECTION_DISTANCE = isMobile ? 0 : 120; // disable connections on mobile
-    const MOUSE_RADIUS = 200;
+    const PARTICLE_COUNT    = isMobile ? 28 : 95;
+    const HUB_COUNT         = isMobile ?  0 :  9;   // Large "neural hub" nodes
+    const CONNECTION_DIST   = isMobile ?  0 : 145;  // Disable connections on mobile
+    const MOUSE_RADIUS      = isMobile ?  0 : 230;
+    const MAX_SPEED         = 0.38;
 
+    /* ── Resize canvas (DPR-aware) ── */
     function resize() {
       const dpr = window.devicePixelRatio || 1;
-      canvas!.width = window.innerWidth * dpr;
+      canvas!.width  = window.innerWidth  * dpr;
       canvas!.height = window.innerHeight * dpr;
-      canvas!.style.width = `${window.innerWidth}px`;
+      canvas!.style.width  = `${window.innerWidth}px`;
       canvas!.style.height = `${window.innerHeight}px`;
       ctx!.scale(dpr, dpr);
     }
 
+    /* ── Spawn particles ── */
     function createParticles() {
       particles.length = 0;
+      let hubsCreated = 0;
       for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const isHub = hubsCreated < HUB_COUNT && Math.random() < 0.14;
+        if (isHub) hubsCreated++;
         particles.push({
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          vx: (Math.random() - 0.5) * 0.3,
-          vy: (Math.random() - 0.5) * 0.3,
-          size: Math.random() * 1.5 + 0.5,
-          opacity: Math.random() * 0.5 + 0.1,
+          x:           Math.random() * window.innerWidth,
+          y:           Math.random() * window.innerHeight,
+          z:           Math.random(),                              // depth 0–1
+          vx:          (Math.random() - 0.5) * 0.22,
+          vy:          (Math.random() - 0.5) * 0.22,
+          baseSize:    isHub ? 2.6 + Math.random() * 1.0 : 0.6 + Math.random() * 1.1,
+          baseOpacity: isHub ? 0.65 + Math.random() * 0.2 : 0.12 + Math.random() * 0.3,
+          isHub,
+          pulse:       Math.random(),                              // staggered ring anim
         });
       }
     }
 
+    /* ── Main render loop ── */
     function draw() {
       ctx!.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-      // Update and draw particles
+      /* Painter's algorithm — draw far particles first */
+      particles.sort((a, b) => a.z - b.z);
+
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
+
+        /* ── Movement ── */
         p.x += p.vx;
         p.y += p.vy;
 
-        // Wrap around edges
-        if (p.x < 0) p.x = window.innerWidth;
-        if (p.x > window.innerWidth) p.x = 0;
-        if (p.y < 0) p.y = window.innerHeight;
-        if (p.y > window.innerHeight) p.y = 0;
+        // Wrap edges with a small padding so particles don't pop
+        if (p.x < -12) p.x = window.innerWidth  + 12;
+        if (p.x > window.innerWidth  + 12) p.x = -12;
+        if (p.y < -12) p.y = window.innerHeight + 12;
+        if (p.y > window.innerHeight + 12) p.y = -12;
 
-        // Mouse interaction - gentle push
-        const dx = mouseX - p.x;
-        const dy = mouseY - p.y;
+        // Slowly breathe depth ("z drifting")
+        p.z += (Math.random() - 0.5) * 0.0008;
+        p.z  = Math.max(0.05, Math.min(1, p.z));
+
+        // Advance hub pulse ring
+        if (p.isHub) p.pulse = (p.pulse + 0.007) % 1;
+
+        /* ── Mouse repulsion ── */
+        const dx   = p.x - mouseX;
+        const dy   = p.y - mouseY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < MOUSE_RADIUS) {
-          const force = (MOUSE_RADIUS - dist) / MOUSE_RADIUS;
-          p.vx -= (dx / dist) * force * 0.02;
-          p.vy -= (dy / dist) * force * 0.02;
+        const nearMouse = dist < MOUSE_RADIUS && MOUSE_RADIUS > 0;
+
+        if (nearMouse && dist > 0) {
+          const force = ((MOUSE_RADIUS - dist) / MOUSE_RADIUS) * 0.016;
+          p.vx += (dx / dist) * force;
+          p.vy += (dy / dist) * force;
         }
 
-        // Damping
-        p.vx *= 0.99;
-        p.vy *= 0.99;
+        // Clamp & dampen speed
+        const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (spd > MAX_SPEED) { p.vx = (p.vx / spd) * MAX_SPEED; p.vy = (p.vy / spd) * MAX_SPEED; }
+        p.vx *= 0.996;
+        p.vy *= 0.996;
 
-        // Draw particle
-        const nearMouse = dist < MOUSE_RADIUS;
-        const glowOpacity = nearMouse ? p.opacity + 0.3 : p.opacity;
+        /* ── Depth-based visual scale ── */
+        const depthFactor  = 0.28 + p.z * 0.72;
+        const size         = p.baseSize    * depthFactor * (nearMouse ? 1.5 : 1);
+        const opacity      = p.baseOpacity * depthFactor * (nearMouse ? 1.6 : 1);
+
+        /* ── Hub pulse ring — drawn BEFORE particle so it's behind ── */
+        if (p.isHub) {
+          const ringR   = size + p.pulse * 20;
+          const ringAlp = (1 - p.pulse) * 0.18 * depthFactor;
+          ctx!.beginPath();
+          ctx!.arc(p.x, p.y, ringR, 0, Math.PI * 2);
+          ctx!.strokeStyle = `rgba(245,158,11,${ringAlp})`;
+          ctx!.lineWidth   = 0.8;
+          ctx!.stroke();
+        }
+
+        /* ── Particle fill ── */
         ctx!.beginPath();
-        ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx!.fillStyle = nearMouse
-          ? `rgba(245, 158, 11, ${glowOpacity})`
-          : `rgba(255, 255, 255, ${glowOpacity * 0.6})`;
+        ctx!.arc(p.x, p.y, size, 0, Math.PI * 2);
+        if (nearMouse || p.isHub) {
+          ctx!.fillStyle = `rgba(245,158,11,${opacity})`;
+        } else {
+          // Far/dim particles shift slightly blue-white for depth contrast
+          const dim = Math.round(160 + p.z * 60);
+          ctx!.fillStyle = `rgba(${dim},${dim},${dim+30},${opacity})`;
+        }
         ctx!.fill();
 
-        // Draw connections
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const cdx = p.x - p2.x;
-          const cdy = p.y - p2.y;
-          const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
-          if (cdist < CONNECTION_DISTANCE) {
-            const lineOpacity = (1 - cdist / CONNECTION_DISTANCE) * 0.15;
+        /* ── Soft glow around hubs & near-mouse particles ── */
+        if ((p.isHub || nearMouse) && size > 0) {
+          ctx!.beginPath();
+          ctx!.arc(p.x, p.y, size * 3.5, 0, Math.PI * 2);
+          const grd = ctx!.createRadialGradient(p.x, p.y, size * 0.4, p.x, p.y, size * 3.5);
+          grd.addColorStop(0, `rgba(245,158,11,${opacity * 0.35})`);
+          grd.addColorStop(1, "rgba(245,158,11,0)");
+          ctx!.fillStyle = grd;
+          ctx!.fill();
+        }
+
+        /* ── Neural connections ── */
+        if (CONNECTION_DIST > 0) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const q   = particles[j];
+            const cdx = p.x - q.x;
+            const cdy = p.y - q.y;
+            const cd  = Math.sqrt(cdx * cdx + cdy * cdy);
+            if (cd >= CONNECTION_DIST) continue;
+
+            const proximity   = 1 - cd / CONNECTION_DIST;
+            const avgDepth    = (p.z + q.z) * 0.5;
+            const isHubEdge   = p.isHub || q.isHub;
+
+            /* Boost opacity when either endpoint is near the mouse */
+            const nearEither  =
+              MOUSE_RADIUS > 0 &&
+              (Math.sqrt((p.x - mouseX) ** 2 + (p.y - mouseY) ** 2) < MOUSE_RADIUS ||
+               Math.sqrt((q.x - mouseX) ** 2 + (q.y - mouseY) ** 2) < MOUSE_RADIUS);
+
+            const lineAlp = proximity * 0.11 * avgDepth * (nearEither ? 2.8 : 1) * (isHubEdge ? 1.7 : 1);
+
             ctx!.beginPath();
             ctx!.moveTo(p.x, p.y);
-            ctx!.lineTo(p2.x, p2.y);
-            ctx!.strokeStyle = `rgba(245, 158, 11, ${lineOpacity})`;
-            ctx!.lineWidth = 0.5;
+            ctx!.lineTo(q.x, q.y);
+            ctx!.strokeStyle = `rgba(245,158,11,${lineAlp})`;
+            ctx!.lineWidth   = isHubEdge ? 0.9 : 0.5;
             ctx!.stroke();
           }
         }
@@ -114,27 +188,23 @@ export default function ParticleField() {
       animFrame = requestAnimationFrame(draw);
     }
 
-    function handleMouseMove(e: MouseEvent) {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    }
+    /* ── Event handlers ── */
+    function handleMouseMove(e: MouseEvent) { mouseX = e.clientX; mouseY = e.clientY; }
+    function handleMouseLeave()             { mouseX = -9999;     mouseY = -9999;     }
 
-    function handleMouseLeave() {
-      mouseX = -9999;
-      mouseY = -9999;
-    }
+    function handleResize() { resize(); createParticles(); }
 
     resize();
     createParticles();
     draw();
 
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize",    handleResize, { passive: true });
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     document.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       cancelAnimationFrame(animFrame);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize",    handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
     };
@@ -144,7 +214,7 @@ export default function ParticleField() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.72 }}
     />
   );
 }
