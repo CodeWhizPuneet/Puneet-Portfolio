@@ -33,10 +33,10 @@ export default function ParticleField() {
 
     /* ── Counts scaled for device capability ── */
     const isMobile = window.innerWidth < 768;
-    const PARTICLE_COUNT    = isMobile ? 28 : 95;
-    const HUB_COUNT         = isMobile ?  0 :  9;   // Large "neural hub" nodes
-    const CONNECTION_DIST   = isMobile ?  0 : 145;  // Disable connections on mobile
-    const MOUSE_RADIUS      = isMobile ?  0 : 230;
+    const PARTICLE_COUNT    = isMobile ? 40 : 95;
+    const HUB_COUNT         = isMobile ?  3 :  9;   // Large "neural hub" nodes
+    const CONNECTION_DIST   = isMobile ? 80 : 145;  // Shorter on mobile for perf
+    const MOUSE_RADIUS      = isMobile ?  0 : 230;  // No hover on touch
     const MAX_SPEED         = 0.38;
 
     /* ── Resize canvas (DPR-aware) ── */
