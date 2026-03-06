@@ -199,7 +199,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-3xl flex flex-col justify-center px-8"
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-3xl flex flex-col justify-center px-8 overflow-hidden"
           >
             {/* Background number */}
             <span className="absolute top-1/2 right-8 -translate-y-1/2 text-[20rem] font-black text-white/[0.015] leading-none select-none pointer-events-none">
@@ -225,10 +225,7 @@ export default function Navbar() {
                   <span className="text-xs font-mono text-accent/50 w-6">
                     0{i + 1}
                   </span>
-                  {/* clamp ensures text never overflows the menu on small phones.
-                   * 10.5vw of 390px = 40.9px; "EXPERIENCE" (longest item) fits in < 290px
-                   * which is well within the px-8 container on any phone. */}
-                  <span className="text-[clamp(2rem,10.5vw,3.75rem)] font-black uppercase tracking-tight text-primary transition-colors duration-200 group-hover:text-accent">
+                  <span className="text-[clamp(1.25rem,7vw,3.5rem)] font-black uppercase tracking-tight text-primary transition-colors duration-200 group-hover:text-accent">
                     {label}
                   </span>
                 </motion.a>
