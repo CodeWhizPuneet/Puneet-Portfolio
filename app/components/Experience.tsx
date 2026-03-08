@@ -4,13 +4,15 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { experience } from "@/lib/data";
 import TiltCard from "./TiltCard";
-import { Briefcase, GraduationCap, Code2 } from "lucide-react";
+import { Briefcase, GraduationCap, Code2, Cpu } from "lucide-react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const iconMap: Record<string, React.ElementType> = {
-  "B.E. Computer Science (AI & ML)": GraduationCap,
-  "Project Development": Code2,
+  "Started Computer Science": GraduationCap,
+  "Programming Foundations": Code2,
+  "First Developer Projects": Briefcase,
+  "Current Focus — AI & ML": Cpu,
 };
 
 export default function Experience() {
@@ -57,7 +59,7 @@ export default function Experience() {
           >
             <span className="h-[1px] w-12 bg-gradient-to-r from-accent to-transparent" />
             <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-accent">
-              &#x2F;&#x2F; experience
+              &#x2F;&#x2F; journey
             </span>
           </motion.div>
 
@@ -68,7 +70,7 @@ export default function Experience() {
             transition={{ duration: 0.7, delay: 0.1, ease }}
             className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-primary"
           >
-            My Journey
+            Engineering Journey
           </motion.h2>
         </div>
 
@@ -128,6 +130,12 @@ export default function Experience() {
                         <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
                           {item.period}
                         </span>
+                        {i === experience.length - 1 && (
+                          <span className="flex items-center gap-1.5 px-2 py-0.5 text-[9px] font-mono uppercase tracking-widest text-green-400 bg-green-400/10 border border-green-400/20 rounded-full ml-auto">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                            Now
+                          </span>
+                        )}
                       </div>
 
                       {/* Role + Company */}
@@ -149,7 +157,7 @@ export default function Experience() {
                           {item.techStack.map((tech) => (
                             <span
                               key={tech}
-                              className="px-2 py-1 text-[9px] font-mono text-accent/60 bg-accent/[0.04] border border-accent/10 rounded"
+                              className="px-2 py-1 text-[9px] font-mono text-accent/60 bg-accent/[0.04] border border-accent/10 rounded cursor-default transition-all duration-200 hover:text-accent hover:bg-accent/10 hover:border-accent/40 hover:shadow-[0_0_8px_rgba(245,158,11,0.35)]"
                             >
                               {tech}
                             </span>
@@ -172,8 +180,8 @@ export default function Experience() {
             transition={{ duration: 0.4, delay: 0.5 }}
             className="absolute left-[14px] md:left-1/2 md:-translate-x-1/2 -bottom-4"
           >
-            <div className="w-[20px] h-[20px] rounded-full bg-accent/20 flex items-center justify-center">
-              <div className="w-2 h-2 rounded-full bg-accent/40" />
+            <div className="w-[20px] h-[20px] rounded-full bg-green-400/20 border border-green-400/30 flex items-center justify-center">
+              <div className="w-2 h-2 rounded-full bg-green-400/60 animate-pulse" />
             </div>
           </motion.div>
         </div>

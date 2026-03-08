@@ -233,7 +233,7 @@ function SmallCard({ project, index }: { project: Project; index: number }) {
         {project.techStack.slice(0, 4).map((tech) => (
           <span
             key={tech}
-            className="px-2 py-1 text-[9px] font-mono text-accent/60 border border-accent/10 rounded"
+            className="px-2 py-1 text-[9px] font-mono text-accent/60 border border-accent/10 rounded cursor-default transition-all duration-200 hover:text-accent hover:bg-accent/10 hover:border-accent/40 hover:shadow-[0_0_8px_rgba(245,158,11,0.35)]"
           >
             {tech}
           </span>

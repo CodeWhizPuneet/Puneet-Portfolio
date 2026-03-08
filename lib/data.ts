@@ -23,20 +23,36 @@ export const projects: Project[] = [
 
 export const experience: Experience[] = [
   {
-    role: "B.E. Computer Science (AI & ML)",
+    role: "Started Computer Science",
     company: "Apex Institute of Technology, Mohali",
-    period: "2024 — 2028",
+    period: "2024",
     description:
-      "Pursuing Bachelor of Engineering in Computer Science specializing in AI & Machine Learning. Building strong foundations in data structures, algorithms, OOP, and DBMS through coursework and hands-on project development.",
-    techStack: ["DSA", "OOP", "DBMS", "Python", "C++", "Java"],
+      "Joined B.E. Computer Science specializing in AI & ML. Picked up C, C++ and Python, started exploring programming fundamentals and core problem-solving concepts.",
+    techStack: ["C", "C++", "Python", "Programming Fundamentals"],
   },
   {
-    role: "Project Development",
+    role: "Programming Foundations",
     company: "Self-Directed",
-    period: "2024 — Present",
+    period: "2025",
     description:
-      "Building practical applications to strengthen programming fundamentals. Developed Terminal Police (a VS Code extension for real-time terminal error alerts), database systems, algorithmic solutions, and this portfolio while exploring full stack development.",
-    techStack: ["Python", "JavaScript", "Next.js", "Node.js", "SQL"],
+      "Deepened understanding of Data Structures and Algorithms, OOP principles, and core CS concepts through consistent practice and coursework.",
+    techStack: ["DSA", "OOP", "Algorithms", "Python", "Java"],
+  },
+  {
+    role: "First Developer Projects",
+    company: "Self-Directed",
+    period: "2026",
+    description:
+      "Built a fully animated developer portfolio with Next.js and created Terminal Police — a VS Code extension now published on the Marketplace. First real-world end-to-end projects shipped.",
+    techStack: ["Next.js", "TypeScript", "VS Code API", "Node.js", "Framer Motion"],
+  },
+  {
+    role: "Current Focus — AI & ML",
+    company: "Now",
+    period: "2026 — Present",
+    description:
+      "Learning DBMS, SQL, and backend fundamentals. Studying Python for Machine Learning — NumPy, Pandas, and ML algorithms. Preparing to build production AI/ML projects.",
+    techStack: ["Python", "DBMS", "SQL", "NumPy", "Pandas", "Machine Learning"],
   },
 ];
 
@@ -44,7 +60,7 @@ export const stats: Stat[] = [
   { value: "6", label: "Languages Learned", suffix: "+" },
   { value: String(projects.length), label: "Projects Built", suffix: "+" },
   { value: String(certifications.length), label: "Certifications", suffix: "" },
-  { value: "1", label: "Year of Growth", suffix: "+" },
+  { value: "1", label: "Extensions Published", suffix: "" },
 ];
 
 export const skills = {

@@ -149,18 +149,18 @@ export default function About() {
             </p>
 
             <p className="text-secondary leading-[1.8] text-base">
-              I&apos;ve built practical applications including a voice-based
-              AI personal assistant in Python and various academic projects
-              that emphasize structured problem solving. My interest lies in
-              understanding how software systems work end-to-end — from logic
-              implementation to user interaction.
+              I&apos;ve shipped real projects — Terminal Police, a VS Code
+              extension published on the Marketplace that gives instant audio
+              alerts on terminal errors, and this portfolio itself. I enjoy
+              building things end-to-end and understanding how every layer of
+              a system fits together.
             </p>
 
             <p className="text-secondary leading-[1.8] text-base">
-              My goal is to develop strong technical depth, write clean and
-              maintainable code, and gradually build the skills required to
-              work on real-world software systems. Every line of code is a
-              step forward.
+              Right now I&apos;m deepening my knowledge in DBMS and backend
+              development while actively studying Machine Learning — NumPy,
+              Pandas, and ML algorithms. My goal is to build production-ready
+              AI systems and contribute to meaningful software.
             </p>
           </motion.div>
 
