@@ -3,11 +3,11 @@ import { certifications } from "@/lib/certifications";
 
 export const projects: Project[] = [
   {
-    title: "Project Nexus — AI Voice Assistant",
+    title: "Terminal Police",
     description:
-      "A voice-controlled personal assistant built with Python. Features speech recognition, text-to-speech synthesis, Google Gemini API integration, wake-word detection, and intelligent command handling for seamless hands-free interaction.",
-    techStack: ["Python", "Speech Recognition", "Google Gemini API", "TTS", "AI Integration"],
-    github: "https://github.com/CodeWhizPuneet/project-nexus",
+      "A VS Code extension that plays an instant audio alert whenever terminal commands fail or errors appear. Features real-time error detection, custom sound support, smart debouncing, cross-platform compatibility, and Command Palette integration. Published on the VS Code Marketplace.",
+    techStack: ["TypeScript", "VS Code API", "Node.js"],
+    github: "https://github.com/CodeWhizPuneet/Terminal-Police",
     featured: true,
   },
   {
@@ -15,22 +15,9 @@ export const projects: Project[] = [
     description:
       "A modern, animated developer portfolio built from scratch with Next.js. Features interactive particle fields, glass-morphism design, smooth scroll animations, cursor glow effects, and a dark theme with amber accents.",
     techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
-    github: "https://github.com/CodeWhizPuneet/portfolio",
+    github: "https://github.com/CodeWhizPuneet/Puneet-Portfolio",
+    live: "https://puneet-portfolio-lime.vercel.app",
     featured: true,
-  },
-  {
-    title: "Matrix Chain Multiplication",
-    description:
-      "Dynamic Programming implementation to find the optimal parenthesization of matrix chain multiplication, minimizing total scalar multiplications. Includes step-by-step DP table visualization.",
-    techStack: ["Python", "Dynamic Programming", "Algorithms"],
-    github: "https://github.com/CodeWhizPuneet/mcm-project",
-  },
-  {
-    title: "Student Database System",
-    description:
-      "A relational database system for academic data management with proper schema design, normalization up to 3NF, and optimized SQL queries supporting full CRUD operations.",
-    techStack: ["MySQL", "SQL", "DBMS", "Schema Design"],
-    github: "https://github.com/CodeWhizPuneet/db-project",
   },
 ];
 
@@ -48,7 +35,7 @@ export const experience: Experience[] = [
     company: "Self-Directed",
     period: "2024 — Present",
     description:
-      "Building practical applications to strengthen programming fundamentals. Developed Project Nexus (voice-based AI assistant with Gemini API), database systems, algorithmic solutions, and this portfolio while exploring full stack development.",
+      "Building practical applications to strengthen programming fundamentals. Developed Terminal Police (a VS Code extension for real-time terminal error alerts), database systems, algorithmic solutions, and this portfolio while exploring full stack development.",
     techStack: ["Python", "JavaScript", "Next.js", "Node.js", "SQL"],
   },
 ];
