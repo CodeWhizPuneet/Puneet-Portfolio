@@ -8,6 +8,7 @@ export const projects: Project[] = [
       "A VS Code extension that plays an instant audio alert whenever terminal commands fail or errors appear. Features real-time error detection, custom sound support, smart debouncing, cross-platform compatibility, and Command Palette integration. Published on the VS Code Marketplace.",
     techStack: ["TypeScript", "VS Code API", "Node.js"],
     github: "https://github.com/CodeWhizPuneet/Terminal-Police",
+    live: "https://marketplace.visualstudio.com/items?itemName=CodeWhizPuneet.terminal-police",
     featured: true,
   },
   {
