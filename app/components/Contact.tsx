@@ -20,14 +20,9 @@ type Status = "idle" | "loading" | "success" | "error";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const fallbackEmailJsConfig = {
-  serviceId: "service_p6nuze8",
-  ownerTemplateId: "template_0sev6hr",
-  autoReplyTemplateId: "template_fgkv8ro",
-  templateId: "template_fgkv8ro",
-  publicKey: "rv5m2XA-ytNzkD_8w",
-  receiverEmail: "puneetshankar2021@gmail.com",
-};
+// EmailJS credentials must be supplied via NEXT_PUBLIC_EMAILJS_* env vars.
+// No hardcoded fallbacks — if they are missing the form shows an error with a
+// direct mailto link so the user can still reach you.
 
 const socials = [
   {
@@ -73,23 +68,15 @@ export default function Contact() {
 
   const numberY = useTransform(scrollYProgress, [0, 1], [80, -80]);
 
-  const emailJsServiceId =
-    process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || fallbackEmailJsConfig.serviceId;
-  const emailJsTemplateId =
-    process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || fallbackEmailJsConfig.templateId;
+  const emailJsServiceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? "";
+  const emailJsTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? "";
   const emailJsOwnerTemplateId =
-    process.env.NEXT_PUBLIC_EMAILJS_OWNER_TEMPLATE_ID ||
-    fallbackEmailJsConfig.ownerTemplateId ||
-    emailJsTemplateId;
+    process.env.NEXT_PUBLIC_EMAILJS_OWNER_TEMPLATE_ID || emailJsTemplateId;
   const emailJsAutoReplyTemplateId =
-    process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID ||
-    fallbackEmailJsConfig.autoReplyTemplateId ||
-    emailJsTemplateId;
-  const emailJsPublicKey =
-    process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || fallbackEmailJsConfig.publicKey;
+    process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID || emailJsTemplateId;
+  const emailJsPublicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? "";
   const contactReceiverEmail =
-    process.env.NEXT_PUBLIC_CONTACT_RECEIVER_EMAIL ||
-    fallbackEmailJsConfig.receiverEmail;
+    process.env.NEXT_PUBLIC_CONTACT_RECEIVER_EMAIL ?? "";
 
   function getEmailJsErrorDetails(error: unknown) {
     if (!error || typeof error !== "object") return null;
@@ -124,7 +111,7 @@ export default function Contact() {
     const content = encodeURIComponent(
       `Name: ${fromName}\nEmail: ${fromEmail}\n\n${body}`
     );
-    return `mailto:puneetshankar2021@gmail.com?subject=${subject}&body=${content}`;
+    return `mailto:${contactReceiverEmail || "puneetshankar2021@gmail.com"}?subject=${subject}&body=${content}`;
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -224,7 +211,7 @@ export default function Contact() {
       setFeedbackMessage(
         autoReplyFailed
           ? "Message sent to Puneet successfully. Auto-reply could not be sent right now."
-          : "Message sent successfully. You should receive an auto-reply soon."
+          : "Message sent successfully. I'll get back to you soon."
       );
       setName("");
       setEmail("");
@@ -373,9 +360,8 @@ export default function Contact() {
               <div className="relative">
                 <label
                   htmlFor="name"
-                  className={`block text-[10px] font-mono uppercase tracking-[0.3em] mb-3 transition-colors duration-300 ${
-                    focusedField === "name" ? "text-accent" : "text-secondary"
-                  }`}
+                  className={`block text-[10px] font-mono uppercase tracking-[0.3em] mb-3 transition-colors duration-300 ${focusedField === "name" ? "text-accent" : "text-secondary"
+                    }`}
                 >
                   Name
                 </label>
@@ -405,9 +391,8 @@ export default function Contact() {
               <div className="relative">
                 <label
                   htmlFor="email"
-                  className={`block text-[10px] font-mono uppercase tracking-[0.3em] mb-3 transition-colors duration-300 ${
-                    focusedField === "email" ? "text-accent" : "text-secondary"
-                  }`}
+                  className={`block text-[10px] font-mono uppercase tracking-[0.3em] mb-3 transition-colors duration-300 ${focusedField === "email" ? "text-accent" : "text-secondary"
+                    }`}
                 >
                   Email
                 </label>
@@ -436,9 +421,8 @@ export default function Contact() {
               <div className="relative">
                 <label
                   htmlFor="message"
-                  className={`block text-[10px] font-mono uppercase tracking-[0.3em] mb-3 transition-colors duration-300 ${
-                    focusedField === "message" ? "text-accent" : "text-secondary"
-                  }`}
+                  className={`block text-[10px] font-mono uppercase tracking-[0.3em] mb-3 transition-colors duration-300 ${focusedField === "message" ? "text-accent" : "text-secondary"
+                    }`}
                 >
                   Message
                 </label>
