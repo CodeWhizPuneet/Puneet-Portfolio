@@ -20,6 +20,15 @@ type Status = "idle" | "loading" | "success" | "error";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+const fallbackEmailJsConfig = {
+  serviceId: "service_p6nuze8",
+  ownerTemplateId: "template_0sev6hr",
+  autoReplyTemplateId: "template_fgkv8ro",
+  templateId: "template_fgkv8ro",
+  publicKey: "rv5m2XA-ytNzkD_8w",
+  receiverEmail: "puneetshankar2021@gmail.com",
+};
+
 const socials = [
   {
     label: "GitHub",
@@ -64,16 +73,23 @@ export default function Contact() {
 
   const numberY = useTransform(scrollYProgress, [0, 1], [80, -80]);
 
-  const emailJsServiceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-  const emailJsTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+  const emailJsServiceId =
+    process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || fallbackEmailJsConfig.serviceId;
+  const emailJsTemplateId =
+    process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || fallbackEmailJsConfig.templateId;
   const emailJsOwnerTemplateId =
-    process.env.NEXT_PUBLIC_EMAILJS_OWNER_TEMPLATE_ID || emailJsTemplateId;
+    process.env.NEXT_PUBLIC_EMAILJS_OWNER_TEMPLATE_ID ||
+    fallbackEmailJsConfig.ownerTemplateId ||
+    emailJsTemplateId;
   const emailJsAutoReplyTemplateId =
-    process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID || emailJsTemplateId;
-  const emailJsPublicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+    process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID ||
+    fallbackEmailJsConfig.autoReplyTemplateId ||
+    emailJsTemplateId;
+  const emailJsPublicKey =
+    process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || fallbackEmailJsConfig.publicKey;
   const contactReceiverEmail =
     process.env.NEXT_PUBLIC_CONTACT_RECEIVER_EMAIL ||
-    "puneetshankar2021@gmail.com";
+    fallbackEmailJsConfig.receiverEmail;
 
   function getEmailJsErrorDetails(error: unknown) {
     if (!error || typeof error !== "object") return null;
