@@ -52,6 +52,7 @@ export default function Contact() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -63,31 +64,166 @@ export default function Contact() {
 
   const numberY = useTransform(scrollYProgress, [0, 1], [80, -80]);
 
+  const emailJsServiceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+  const emailJsTemplateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+  const emailJsOwnerTemplateId =
+    process.env.NEXT_PUBLIC_EMAILJS_OWNER_TEMPLATE_ID || emailJsTemplateId;
+  const emailJsAutoReplyTemplateId =
+    process.env.NEXT_PUBLIC_EMAILJS_AUTOREPLY_TEMPLATE_ID || emailJsTemplateId;
+  const emailJsPublicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+  const contactReceiverEmail =
+    process.env.NEXT_PUBLIC_CONTACT_RECEIVER_EMAIL ||
+    "puneetshankar2021@gmail.com";
+
+  function getEmailJsErrorDetails(error: unknown) {
+    if (!error || typeof error !== "object") return null;
+
+    const maybeError = error as {
+      status?: number;
+      text?: string;
+      message?: string;
+      name?: string;
+    };
+
+    const parts: string[] = [];
+    if (typeof maybeError.status === "number") {
+      parts.push(`status ${maybeError.status}`);
+    }
+    if (typeof maybeError.text === "string" && maybeError.text.trim()) {
+      parts.push(maybeError.text.trim());
+    } else if (
+      typeof maybeError.message === "string" &&
+      maybeError.message.trim()
+    ) {
+      parts.push(maybeError.message.trim());
+    } else if (typeof maybeError.name === "string" && maybeError.name.trim()) {
+      parts.push(maybeError.name.trim());
+    }
+
+    return parts.length ? parts.join(" - ") : null;
+  }
+
+  function buildMailtoLink(fromName: string, fromEmail: string, body: string) {
+    const subject = encodeURIComponent(`Portfolio Contact - ${fromName}`);
+    const content = encodeURIComponent(
+      `Name: ${fromName}\nEmail: ${fromEmail}\n\n${body}`
+    );
+    return `mailto:puneetshankar2021@gmail.com?subject=${subject}&body=${content}`;
+  }
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedMessage = message.trim();
+
+    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
+      setStatus("error");
+      setFeedbackMessage("Please fill in all fields before sending.");
+      setTimeout(() => setStatus("idle"), 5000);
+      return;
+    }
+
     setStatus("loading");
+    setFeedbackMessage("");
+
+    if (
+      !emailJsServiceId ||
+      !emailJsOwnerTemplateId ||
+      !emailJsAutoReplyTemplateId ||
+      !emailJsPublicKey
+    ) {
+      console.error("EmailJS config is missing. Check NEXT_PUBLIC_EMAILJS_* variables.");
+      setStatus("error");
+      setFeedbackMessage(
+        "Contact form is temporarily unavailable. Please email directly using the link below."
+      );
+      setTimeout(() => setStatus("idle"), 7000);
+      return;
+    }
 
     try {
+      const commonParams = {
+        from_name: trimmedName,
+        name: trimmedName,
+        message: trimmedMessage,
+        title: trimmedMessage,
+        visitor_email: trimmedEmail,
+      };
+
+      // 1) Owner notification: always route this to your inbox.
       await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        emailJsServiceId,
+        emailJsOwnerTemplateId,
         {
-          from_name: name,
-          from_email: email,
-          message: message,
+          ...commonParams,
+          from_email: trimmedEmail,
           to_name: "Puneet",
+          email: contactReceiverEmail,
+          to_email: contactReceiverEmail,
+          owner_email: contactReceiverEmail,
+          sender_email: trimmedEmail,
+          user_email: trimmedEmail,
+          recipient_email: contactReceiverEmail,
+          to: contactReceiverEmail,
+          contact_email: trimmedEmail,
+          contact_message: trimmedMessage,
+          reply_to: trimmedEmail,
         },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+        emailJsPublicKey
       );
 
+      // 2) Visitor auto-reply: route this to sender email.
+      let autoReplyFailed = false;
+      try {
+        await emailjs.send(
+          emailJsServiceId,
+          emailJsAutoReplyTemplateId,
+          {
+            ...commonParams,
+            from_email: contactReceiverEmail,
+            to_name: trimmedName,
+            email: trimmedEmail,
+            to_email: trimmedEmail,
+            owner_email: contactReceiverEmail,
+            sender_email: trimmedEmail,
+            user_email: trimmedEmail,
+            recipient_email: trimmedEmail,
+            to: trimmedEmail,
+            contact_email: trimmedEmail,
+            contact_message: trimmedMessage,
+            reply_to: contactReceiverEmail,
+          },
+          emailJsPublicKey
+        );
+      } catch (autoReplyError) {
+        autoReplyFailed = true;
+        console.error(
+          "EmailJS auto-reply failed:",
+          getEmailJsErrorDetails(autoReplyError) ?? autoReplyError
+        );
+      }
+
       setStatus("success");
+      setFeedbackMessage(
+        autoReplyFailed
+          ? "Message sent to Puneet successfully. Auto-reply could not be sent right now."
+          : "Message sent successfully. You should receive an auto-reply soon."
+      );
       setName("");
       setEmail("");
       setMessage("");
       setTimeout(() => setStatus("idle"), 5000);
-    } catch {
+    } catch (error) {
+      const errorDetails = getEmailJsErrorDetails(error);
+      console.error("EmailJS send failed:", errorDetails ?? error);
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 5000);
+      setFeedbackMessage(
+        errorDetails
+          ? `Could not send via form (${errorDetails}). Please use direct email below.`
+          : "Could not send via form right now. Please use direct email below."
+      );
+      setTimeout(() => setStatus("idle"), 7000);
     }
   }
 
@@ -341,7 +477,8 @@ export default function Contact() {
                 >
                   <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
                   <p className="text-sm text-green-400 font-medium">
-                    Message sent! I&apos;ll get back to you within 24 hours.
+                    {feedbackMessage ||
+                      "Message sent! I&apos;ll get back to you within 24 hours."}
                   </p>
                 </motion.div>
               )}
@@ -352,9 +489,15 @@ export default function Contact() {
                   className="flex items-center gap-3 p-4 rounded-xl border border-red-400/30 bg-red-400/[0.06]"
                 >
                   <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-                  <p className="text-sm text-red-400 font-medium">
-                    Something went wrong. Please try again.
-                  </p>
+                  <div className="text-sm text-red-400 font-medium">
+                    <p>{feedbackMessage || "Something went wrong. Please try again."}</p>
+                    <a
+                      href={buildMailtoLink(name.trim(), email.trim(), message.trim())}
+                      className="inline-flex mt-2 underline underline-offset-4 hover:text-red-300 transition-colors duration-200"
+                    >
+                      Email me directly
+                    </a>
+                  </div>
                 </motion.div>
               )}
             </form>

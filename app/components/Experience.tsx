@@ -29,7 +29,7 @@ export default function Experience() {
     <section
       id="experience"
       ref={sectionRef}
-      className="relative py-32 md:py-44 px-6 md:px-12"
+      className="relative py-24 sm:py-28 md:py-40 lg:py-44 px-4 sm:px-6 md:px-10 lg:px-12"
     >
       {/* Ambient light */}
       <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] opacity-[0.02] pointer-events-none">
@@ -49,7 +49,7 @@ export default function Experience() {
         </motion.span>
 
         {/* Section header */}
-        <div className="mb-20">
+        <div className="mb-14 sm:mb-20">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -68,16 +68,16 @@ export default function Experience() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1, ease }}
-            className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-primary"
+            className="text-[2.2rem] leading-[0.92] sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-primary break-words"
           >
             Engineering Journey
           </motion.h2>
         </div>
 
         {/* Timeline */}
-        <div className="relative">
+        <div className="relative overflow-visible pl-1 sm:pl-2 md:pl-0">
           {/* Vertical line */}
-          <div className="absolute left-[23px] md:left-1/2 md:-translate-x-[1px] top-0 bottom-0 w-[2px]">
+          <div className="absolute left-[27px] sm:left-[29px] md:left-1/2 md:-translate-x-[1px] top-0 bottom-0 w-[2px]">
             <motion.div
               initial={{ scaleY: 0 }}
               whileInView={{ scaleY: 1 }}
@@ -88,7 +88,7 @@ export default function Experience() {
           </div>
 
           {/* Timeline items */}
-          <div className="space-y-16">
+          <div className="space-y-12 sm:space-y-16">
             {experience.map((item, i) => {
               const Icon = iconMap[item.role] || Briefcase;
               const isLeft = i % 2 === 0;
@@ -101,12 +101,12 @@ export default function Experience() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.7, delay: 0.1 + i * 0.15, ease }}
                   style={{ perspective: 900 }}
-                  className={`relative flex items-start gap-8 md:gap-0 ${
+                  className={`relative flex items-start gap-6 sm:gap-8 md:gap-0 overflow-visible ${
                     isLeft ? "md:flex-row" : "md:flex-row-reverse"
                   }`}
                 >
                   {/* Timeline dot */}
-                  <div className="absolute left-[14px] md:left-1/2 md:-translate-x-1/2 z-10">
+                  <div className="absolute left-[18px] sm:left-[20px] md:left-1/2 md:-translate-x-1/2 z-10">
                     <div className="w-[20px] h-[20px] rounded-full border-2 border-accent bg-background flex items-center justify-center">
                       <div className="w-2 h-2 rounded-full bg-accent" />
                     </div>
@@ -116,7 +116,7 @@ export default function Experience() {
 
                   {/* Card */}
                   <div
-                    className={`ml-14 md:ml-0 md:w-[calc(50%-40px)] ${
+                    className={`ml-16 sm:ml-18 md:ml-0 md:w-[calc(50%-40px)] ${
                       isLeft ? "md:pr-12" : "md:pl-12"
                     }`}
                   >
@@ -178,7 +178,7 @@ export default function Experience() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="absolute left-[14px] md:left-1/2 md:-translate-x-1/2 -bottom-4"
+            className="absolute left-[18px] sm:left-[20px] md:left-1/2 md:-translate-x-1/2 -bottom-4"
           >
             <div className="w-[20px] h-[20px] rounded-full bg-green-400/20 border border-green-400/30 flex items-center justify-center">
               <div className="w-2 h-2 rounded-full bg-green-400/60 animate-pulse" />

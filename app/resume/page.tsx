@@ -13,11 +13,14 @@ export default function ResumePage() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    let objectUrl: string | null = null;
+
     /* pointer: coarse = touchscreen; also catch narrow viewports */
     const mobile =
       window.matchMedia("(pointer: coarse)").matches ||
       window.innerWidth < 768;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(mobile);
 
     if (!mobile) {
@@ -25,7 +28,10 @@ export default function ResumePage() {
        * which intercepts direct PDF links on Windows */
       fetch(RESUME_PATH)
         .then((res) => res.blob())
-        .then((blob) => setBlobUrl(URL.createObjectURL(blob)))
+        .then((blob) => {
+          objectUrl = URL.createObjectURL(blob);
+          setBlobUrl(objectUrl);
+        })
         .catch(() => {
           /* If blob fetch fails, fall back to direct path */
           setBlobUrl(RESUME_PATH);
@@ -33,9 +39,8 @@ export default function ResumePage() {
     }
 
     return () => {
-      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
